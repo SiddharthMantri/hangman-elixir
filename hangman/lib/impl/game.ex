@@ -1,4 +1,5 @@
 defmodule Hangman.Impl.Game do
+
   alias Hangman.Type
 
   @type t :: %__MODULE__{
@@ -7,6 +8,7 @@ defmodule Hangman.Impl.Game do
           letters: list(String.t()),
           used: MapSet.t(String.t())
         }
+        
   defstruct(
     turns_left: 7,
     game_state: :initializing,
@@ -32,9 +34,9 @@ defmodule Hangman.Impl.Game do
 
   @spec make_move(t, String.t()) :: {t, Type.tally()}
   def make_move(game = %{game_state: state}, _)
-  # Pattern match on won OR lost game state and ignore guess
-  when state in [:won, :lost] do
-    game 
+      # Pattern match on won OR lost game state and ignore guess
+      when state in [:won, :lost] do
+    game
     |> return_with_tally()
   end
 
@@ -43,34 +45,37 @@ defmodule Hangman.Impl.Game do
     |> return_with_tally()
   end
 
-   ####################################################
+  ####################################################
 
   defp accept_guess(game, _guess, _already_used = true) do
+    # remember Head and Tail in enums
     %{
-      game | game_state: :already_used # remember Head and Tail in enums
+      game
+      | game_state: :already_used
     }
   end
 
   defp accept_guess(game, guess, _already_used) do
     %{
-      game | used: MapSet.put(game.used, guess)
+      game
+      | used: MapSet.put(game.used, guess)
     }
     |> score_guess(Enum.member?(game.letters, guess))
   end
 
   ####################################################
 
-  defp score_guess(game, _good_guess=true) do
+  defp score_guess(game, _good_guess = true) do
     new_state = maybe_won(MapSet.subset?(MapSet.new(game.letters), game.used))
-    %{ game | game_state: new_state }
+    %{game | game_state: new_state}
   end
 
-  defp score_guess(game = %{ turns_left: 1 }, _bad_guess) do
-    %{ game | game_state: :lost, turns_left: 0 }
+  defp score_guess(game = %{turns_left: 1}, _bad_guess) do
+    %{game | game_state: :lost, turns_left: 0}
   end
 
   defp score_guess(game, _bad_guess) do
-    %{ game | game_state: :bad_guess, turns_left: game.turns_left - 1 }
+    %{game | game_state: :bad_guess, turns_left: game.turns_left - 1}
   end
 
   ####################################################
@@ -80,13 +85,13 @@ defmodule Hangman.Impl.Game do
       turns_left: game.turns_left,
       game_state: game.game_state,
       letters: reveal_guessed_letters(game),
-      used: game.used |> MapSet.to_list |> Enum.sort
+      used: game.used |> MapSet.to_list() |> Enum.sort()
     }
   end
 
-  defp return_with_tally(game)  do
+  defp return_with_tally(game) do
     {game, tally(game)}
-  end  
+  end
 
   defp reveal_guessed_letters(game) do
     game.letters
@@ -96,7 +101,6 @@ defmodule Hangman.Impl.Game do
   defp maybe_won(true), do: :won
   defp maybe_won(_), do: :good_guess
 
-  defp maybe_reveal(true, letter),  do: letter
-  defp maybe_reveal(_,    _letter), do: "_"
-
+  defp maybe_reveal(true, letter), do: letter
+  defp maybe_reveal(_, _letter), do: "_"
 end
