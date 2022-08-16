@@ -1,14 +1,9 @@
 defmodule Dictionary do
 
-  # Module attribute (created at compile time)
-  # Compile time code execution (wtf?)
-  @word_list "assets/words.txt"
-    |> File.read!
-    |> String.split(~r/\n/, trim: true)
+  alias Dictionary.Impl.Words
 
-  def random_word do
-    @word_list
-    |> Enum.random
-  end
+  defdelegate start, to: Words
+  defdelegate random_word(), to: Words
+  defdelegate random_word(words), to: Words
 
 end

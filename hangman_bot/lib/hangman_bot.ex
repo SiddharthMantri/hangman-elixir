@@ -11,5 +11,6 @@ defmodule HangmanBot do
 
   def start do
     game = Hangman.new_game()
+    
   end
 end
