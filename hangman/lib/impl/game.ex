@@ -80,7 +80,7 @@ defmodule Hangman.Impl.Game do
 
   ####################################################
   # private function defp
-  defp tally(game) do
+  def tally(game) do
     %{
       turns_left: game.turns_left,
       game_state: game.game_state,
